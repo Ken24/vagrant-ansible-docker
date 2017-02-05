@@ -1,0 +1,29 @@
+---
+- name: Ensure Docker Repository is copied
+  copy:
+    src: centos7
+    dest: /etc/yum.repos.d/docker.repo
+
+- name: Ensure docker-engine and docker-python is installed
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker-python
+    - docker-engine
+
+- name: Ensure user vagrant can execute docker
+  user:
+    name: "{{ docker_executable_user }}"
+    groups: docker
+    append: yes
+
+- name: Ensure docker is started
+  service:
+    name: docker
+    state: started
+
+- name: Ensure docker is enabled
+  service:
+    name: docker
+    enabled: yes
